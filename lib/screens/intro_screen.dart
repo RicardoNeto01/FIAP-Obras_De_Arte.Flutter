@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:obras_de_arte/data/settings_repository.dart';
 import 'package:obras_de_arte/routes.dart';
 
 class IntroScreen extends StatefulWidget {
@@ -28,6 +29,20 @@ class _IntroScreenState extends State<IntroScreen> {
     },
   ];
 
+  SettingsRepository? _settingsRepository;
+  @override
+  void initState() {
+    super.initState();
+    _initRepository();
+  }
+
+  Future<void> _initRepository() async {
+    final repo = await SettingsRepository.create();
+    setState(() {
+      _settingsRepository = repo;
+    });
+  }
+
   final PageController _pageController = PageController();
   int _currentPage = 0;
   bool _dontShowAgain = false;
@@ -43,7 +58,9 @@ class _IntroScreenState extends State<IntroScreen> {
     }
   }
 
-  void _finishIntro() {
+  Future<void> _finishIntro() async {
+    await _settingsRepository?.setShowIntro(!_dontShowAgain);
+    if (!mounted) return;
     Navigator.pushReplacementNamed(context, Routes.home);
   }
 

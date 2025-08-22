@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:obras_de_arte/data/settings_repository.dart';
 import 'package:obras_de_arte/routes.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -10,17 +11,22 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
-  void initState(){
-    //Função para inicialziar o state.
+  void initState() {
     super.initState();
+    _navigate();
+  }
 
-    //Linha para inicializar a tela depois de 3 segundos.
-    Future.delayed(Duration(seconds: 3), (){
-      if(!mounted) return;
+  Future<void> _navigate() async {
+    await Future.delayed(const Duration(seconds: 2));
+    final repo = await SettingsRepository.create();
+    final showIntro = await repo.getShowIntro();
+    if (!mounted) return;
+    if (showIntro) {
       Navigator.pushReplacementNamed(context, Routes.intro);
-    });
+    } else {
+      Navigator.pushReplacementNamed(context, Routes.home);
+    }
   }
 
   @override
@@ -31,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
           'assets/lottie/intro1.json',
           width: 200,
           height: 200,
-          ),
+        ),
       ),
     );
   }
